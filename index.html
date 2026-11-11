@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10162F">
+<title>Rádio És-me Aqui</title>
+<style>
+:root {
+ --bg:#10162F;
+ --panel:#182343;
+ --cyan:#20C7D9;
+ --white:#fff;
+ --silver:#A7B5C8;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;color:var(--white);
+ font-family:Arial,sans-serif;
+ background:radial-gradient(ellipse at top,#263c70,var(--bg) 65%);
+}
+header{
+ max-width:650px;margin:auto;padding:20px;
+ display:flex;align-items:center;gap:14px;
+}
+.logo-small{
+ width:55px;height:55px;object-fit:contain;
+ border-radius:12px;
+}
+.brand{font-weight:900;letter-spacing:1px}
+.brand small{
+ display:block;color:var(--cyan);font-size:10px;
+ letter-spacing:2px;margin-top:5px
+}
+main{max-width:650px;margin:auto;padding:10px 20px 40px}
+.tabs{display:flex;gap:10px;margin:15px 0 25px}
+.tab{
+ flex:1;padding:15px;border-radius:14px;
+ border:1px solid #34466c;background:var(--panel);
+ color:var(--silver);font-weight:bold;cursor:pointer
+}
+.tab.active{background:var(--cyan);color:var(--bg)}
+.page{display:none}
+.page.active{display:block}
+.cover{
+ width:min(100%,340px);aspect-ratio:1;
+ margin:15px auto 25px;padding:18px;
+ display:grid;place-items:center;
+ border-radius:26px;
+ background:linear-gradient(145deg,#203866,#111a39);
+ border:1px solid #20C7D9;
+ box-shadow:0 0 35px #20C7D944;
+}
+.cover img{width:100%;height:100%;object-fit:contain}
+.live{
+ text-align:center;color:var(--cyan);
+ font-size:12px;font-weight:bold;letter-spacing:3px
+}
+h1{text-align:center;font-size:28px;margin:12px 0}
+.subtitle{text-align:center;color:var(--silver)}
+.controls{
+ display:flex;justify-content:center;align-items:center;
+ gap:35px;margin:30px 0
+}
+.control{border:0;background:none;color:white;font-size:25px;cursor:pointer}
+.play{
+ width:76px;height:76px;border:0;border-radius:50%;
+ background:var(--cyan);color:var(--bg);
+ font-size:29px;cursor:pointer;
+ box-shadow:0 0 28px #20c7d966
+}
+.volume{display:flex;align-items:center;gap:12px;color:var(--silver)}
+input[type=range]{flex:1;accent-color:var(--cyan)}
+.timer{text-align:center;color:var(--silver);margin:20px}
+.equalizer{
+ height:65px;display:flex;align-items:end;
+ justify-content:center;gap:5px;margin:25px
+}
+.equalizer i{
+ display:block;width:7px;height:var(--h);
+ background:var(--cyan);border-radius:5px
+}
+.playing .equalizer i{animation:wave .7s ease-in-out infinite alternate}
+.playing .equalizer i:nth-child(3n){animation-delay:.2s}
+.playing .equalizer i:nth-child(2n){animation-delay:.4s}
+@keyframes wave{to{height:10px}}
+.status{text-align:center;color:var(--silver);font-size:12px}
+.section-title{font-size:23px}
+.section-sub{color:var(--silver);font-size:13px}
+.music-list{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.music{
+ background:var(--panel);border:1px solid #34466c;
+ border-radius:18px;padding:13px;text-align:center
+}
+.music-art{
+ aspect-ratio:1;background:#101a39;
+ border-radius:13px;padding:12px;
+ display:grid;place-items:center
+}
+.music-art img{width:100%;height:100%;object-fit:contain}
+.music strong{display:block;margin-top:12px;font-size:14px}
+.music small{display:block;color:var(--cyan);margin-top:7px}
+footer{text-align:center;color:#7183a6;font-size:11px;padding:30px 10px}
+</style>
+</head>
+<body>
+
+<header>
+<img src="logo.png" class="logo-small" alt="Logo Rádio És-me Aqui">
+<div class="brand">
+RÁDIO ÉS-ME AQUI
+<small>JESUS É A NOSSA CONEXÃO</small>
+</div>
+</header>
+
+<main>
+<nav class="tabs">
+<button class="tab active" onclick="showPage('inicio',this)">INÍCIO</button>
+<button class="tab" onclick="showPage('musicas',this)">CAPAS E MÚSICAS</button>
+</nav>
+
+<section class="page active" id="inicio">
+<div class="cover">
+<img src="logo.png" alt="Rádio És-me Aqui">
+</div>
+
+<div class="live">● TRANSMISSÃO AO VIVO</div>
+<h1>Rádio És-me Aqui</h1>
+<p class="subtitle">Jesus é a nossa conexão!</p>
+
+<div class="controls">
+<button class="control" onclick="setTimer()" title="Temporizador">◷</button>
+<button class="play" id="play" onclick="togglePlay()">▶</button>
+<button class="control" onclick="toggleMute()" title="Silenciar">🔊</button>
+</div>
+
+<div class="volume">
+<span>🔈</span>
+<input id="volume" type="range" min="0" max="1" step="0.01" value="0.8">
+<span>🔊</span>
+</div>
+
+<div class="timer" id="timer">Temporizador desligado</div>
+<div class="equalizer" id="equalizer"></div>
+<div class="status" id="status">Verificando servidor...</div>
+<audio id="audio" preload="none"></audio>
+</section>
+
+<section class="page" id="musicas">
+<h2 class="section-title">Capas e Músicas</h2>
+<p class="section-sub">Uma programação feita para aproximar você de Jesus.</p>
+
+<div class="music-list">
+<div class="music">
+<div class="music-art">
+<img src="logo.png" alt="Rádio És-me Aqui">
+</div>
+<strong>Rádio És-me Aqui</strong>
+<small>● AO VIVO</small>
+</div>
+</div>
+</section>
+
+<footer>RÁDIO ÉS-ME AQUI • JESUS É A NOSSA CONEXÃO</footer>
+</main>
+
+<script>
+const SERVER_URL="https://servidor-es-me-aqui.onrender.com";
+const audio=document.getElementById("audio");
+const statusBox=document.getElementById("status");
+const playButton=document.getElementById("play");
+let timerId=null;
+
+function showPage(page,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ button.classList.add("active");
+}
+
+function togglePlay(){
+ if(audio.paused){
+  audio.src=SERVER_URL+"/stream";
+  audio.play().then(()=>{
+   playButton.textContent="Ⅱ";
+   document.body.classList.add("playing");
+   statusBox.textContent="Conectado ao player. Aguardando áudio.";
+  }).catch(()=>{
+   statusBox.textContent="Não foi possível iniciar. O servidor pode estar sem transmissão.";
+  });
+ }else{
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
+ }
+}
+
+function toggleMute(){audio.muted=!audio.muted}
+
+document.getElementById("volume").addEventListener("input",e=>{
+ audio.volume=Number(e.target.value);
+});
+
+function setTimer(){
+ const minutes=Number(prompt("Desligar a rádio em quantos minutos?"));
+ if(!minutes||minutes<1)return;
+ clearTimeout(timerId);
+ document.getElementById("timer").textContent="Desligamento em "+minutes+" minutos";
+ timerId=setTimeout(()=>{
+  audio.pause();
+  audio.removeAttribute("src");
+  audio.load();
+  document.getElementById("timer").textContent="Temporizador finalizado";
+ },minutes*60000);
+}
+
+audio.addEventListener("pause",()=>{
+ playButton.textContent="▶";
+ document.body.classList.remove("playing");
+});
+audio.addEventListener("playing",()=>{
+ playButton.textContent="Ⅱ";
+ document.body.classList.add("playing");
+ statusBox.textContent="Reproduzindo transmissão ao vivo.";
+});
+
+const eq=document.getElementById("equalizer");
+for(let i=0;i<30;i++){
+ const bar=document.createElement("i");
+ bar.style.setProperty("--h",(15+Math.random()*48)+"px");
+ eq.appendChild(bar);
+}
+
+fetch(SERVER_URL+"/api/health")
+.then(r=>r.json())
+.then(data=>{
+ statusBox.textContent=data.status==="online"
+ ? (data.receivingAudio?"Servidor recebendo áudio.":"Servidor online, aguardando transmissão.")
+ : "Servidor indisponível.";
+})
+.catch(()=>statusBox.textContent="Não foi possível consultar o servidor.");
+</script>
+</body>
+</html>
